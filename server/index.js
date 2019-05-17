@@ -34,6 +34,12 @@ const shop = {
         });
         return maxId + 1;
     },
+
+    async getIndexBiId(id) {
+        const product = await shop.read();
+        const index = product.findIndex(prod => prod.id === +id);
+        return index
+    },
     products: []
 }
 
@@ -56,8 +62,22 @@ app.post('/products', async(req, res) => {
     res.json('ok')
 });
 
+app.put('/products/:id', async(req, res) => {
+    const index = await shop.getIndexBiId(req.params.id);
+    const { Type, color, size, paid, amount, name } = req.body
+    const product = shop.products[index];
+    product.Type = Type;
+    product.color = color;
+    product.size = size;
+    product.paid = paid;
+    product.amount = amount;
+    product.name = name;
+
+    await shop.save();
+    res.json('ok')
+})
+
 
 app.listen(8080, () => {
     console.log('listen...');
-
 })
