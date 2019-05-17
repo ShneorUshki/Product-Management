@@ -53,6 +53,12 @@ app.get('/products', async(req, res) => {
     res.json(await shop.read())
 });
 
+app.get('/products/:id', async(req, res) => {
+    const product = await shop.read();
+    const prod = product.find(prod => prod.id === +req.params.id)
+    res.json(prod);
+})
+
 
 app.post('/products', async(req, res) => {
     const product = req.body;
@@ -76,6 +82,15 @@ app.put('/products/:id', async(req, res) => {
     await shop.save();
     res.json('ok')
 })
+app.delete('/products/:id', async(req, res) => {
+    const index = await shop.getIndexBiId(req.params.id);
+    shop.products.splice(index, 1);
+
+    await shop.save();
+    res.json('ok')
+})
+
+
 
 
 app.listen(8080, () => {
